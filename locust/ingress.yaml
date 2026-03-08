@@ -1,0 +1,26 @@
+# Ingress OCI Native - Ajuste certificate-ocid e subnet-id
+# Para múltiplos hosts, adicione mais rules (todos no mesmo Ingress com wildcard)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: locust-giropops
+  annotations:
+    oci-native-ingress.oraclecloud.com/certificate-ocid: "ocid1.certificate.oc1.sa-vinhedo-1.amaaaaaanfsporyaekl7eunmlqtdfy2y3twyblahduxhu3qpcsnb4yqlntwq"
+    oci-native-ingress.oraclecloud.com/backend-tls-enabled: "false"
+    oci-native-ingress.oraclecloud.com/http-listener-port: "80"
+    oci-native-ingress.oraclecloud.com/https-listener-port: "443"
+    oci-native-ingress.oraclecloud.com/is-force-https: "true"
+    oci-native-ingress.oraclecloud.com/subnet-id: "ocid1.subnet.oc1.sa-vinhedo-1.aaaaaaaagmztwhi7cnqtcxqxvq5gttlunlpy5556m2caseforpn7ec3uoshq"
+spec:
+  ingressClassName: oci-nic
+  rules:
+    - host: "locust-giropops.collecc.com.br"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: locust-giropops
+                port:
+                  number: 8089

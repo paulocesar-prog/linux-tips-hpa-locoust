@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: locust-giropops
+  name: locust-giropops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: locust-giropops
+  template:
+    metadata:
+      labels:
+        app: locust-giropops
+    spec:
+      containers:
+      - image: docker.io/linuxtips/locust-giropops:1.0
+        name: locust-giropops
+        env:
+          - name: LOCUST_LOCUSTFILE
+            value: "/usr/src/app/scripts/locustfile.py"
+          - name: LOCUST_HOST
+            value: "http://giropops-senhas:5000"
+        ports:
+        - containerPort: 8089
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8089
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8089
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        volumeMounts:
+        - name: locust-scripts
+          mountPath: /usr/src/app/scripts
+      volumes:
+      - name: locust-scripts
+        configMap:
+          name: locust-scripts
